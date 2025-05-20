@@ -12,3 +12,4 @@ generated-docs/
 .spago
 src/**/*.js
 .vscode
+scratch
