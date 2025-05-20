@@ -1,0 +1,17 @@
+package:
+  name: template
+  dependencies:
+    - aff
+    - argonaut
+    - codec-argonaut
+    - console
+    - effect
+    - nullable
+    - prelude
+  test:
+    main: Test.Main
+    dependencies: []
+workspace:
+  packageSet:
+    registry: 64.8.0
+  extraPackages: {}

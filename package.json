@@ -1,0 +1,13 @@
+{
+  "name": "purescript-deno-json-db",
+  "devDependencies": {
+    "@types/deno": "^2.3.0",
+    "purescript": "^0.15.15",
+    "spago": "^0.93.44",
+    "typescript": "^5.8.3"
+  },
+  "scripts": {
+    "build": "tsc; spago build",
+    "main": "deno run --allow-net main.ts"
+  }
+}
