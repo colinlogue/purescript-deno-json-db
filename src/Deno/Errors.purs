@@ -1,7 +1,5 @@
 module Deno.Errors where
 
-import Prelude
-
 import Effect.Exception (Error)
 
 

@@ -8,6 +8,6 @@
   },
   "scripts": {
     "build": "tsc; spago build",
-    "main": "deno run --allow-net main.ts"
+    "main": "mkdir -p scratch && cd scratch && deno run --allow-all ../main.ts"
   }
 }

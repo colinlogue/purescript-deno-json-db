@@ -2,24 +2,10 @@ import type { EffectFn1, EffectFn3, EffectFn4, EffectFn5 } from "./purescript.d.
 
 
 
-export const _mkdir: EffectFn4<{ recursive: boolean | null, mode: number | null } | null, string, () => void, EffectFn1<Error, void>, void> = (opts, path, onSuccess, onError) => {
-  if (opts) {
-    const options: Deno.MkdirOptions = {};
-    if (typeof opts.recursive === "boolean") {
-      options.recursive = opts.recursive;
-    }
-    if (typeof opts.mode === "number") {
-      options.mode = opts.mode;
-    }
-    Deno.mkdir(path, options)
-      .then(onSuccess)
-      .catch(onError);
-  }
-  else {
-    Deno.mkdir(path)
-      .then(onSuccess)
-      .catch(onError);
-  }
+export const _mkdir: EffectFn4<Deno.MkdirOptions, string, () => void, EffectFn1<Error, void>, void> = (opts, path, onSuccess, onError) => {
+  Deno.mkdir(path, opts)
+    .then(onSuccess)
+    .catch(onError);
 };
 
 export const _readTextFile: EffectFn3<string, EffectFn1<string, void>, EffectFn1<Error, void>, void> = (path, onSuccess, onError) => {
@@ -33,3 +19,17 @@ export const _writeTextFile: EffectFn5<Deno.WriteFileOptions, string, string, ()
     .then(onSuccess)
     .catch(onError);
 };
+
+export const _open: EffectFn4<Deno.OpenOptions, string, EffectFn1<Deno.FsFile, void>, EffectFn1<Error, void>, void> = (opts, path, onSuccess, onError) => {
+  Deno.open(path, opts)
+    .then(file => { file.path = path; onSuccess(file); })
+    .catch(onError);
+}
+
+declare global {
+  namespace Deno {
+    interface FsFile {
+      path?: string;
+    }
+  }
+}
