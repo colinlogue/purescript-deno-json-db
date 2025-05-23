@@ -1,5 +1,6 @@
 module JsonDatabase
-  ( RetrievalError(..)
+  ( Location
+  , RetrievalError(..)
   , get
   , set
   , update

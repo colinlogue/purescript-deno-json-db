@@ -2,12 +2,17 @@ package:
   name: template
   dependencies:
     - aff
+    - aff-promise
     - argonaut
     - codec-argonaut
     - console
+    - debug
     - effect
     - nullable
     - prelude
+    - strings
+    - web-fetch
+    - web-url
   test:
     main: Test.Main
     dependencies: []
