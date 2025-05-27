@@ -7,6 +7,7 @@ package:
     - codec-argonaut
     - console
     - debug
+    - deno-http-server
     - effect
     - nullable
     - prelude
@@ -19,4 +20,28 @@ package:
 workspace:
   packageSet:
     registry: 64.8.0
-  extraPackages: {}
+  extraPackages:
+    deno-errors:
+      git: https://github.com/colinlogue/purescript-deno-core
+      ref: v0.0.3
+      subdir: packages/deno-errors
+    deno-file-system:
+      git: https://github.com/colinlogue/purescript-deno-core
+      ref: v0.0.3
+      subdir: packages/deno-file-system
+    deno-http-server:
+      git: https://github.com/colinlogue/purescript-deno-core
+      ref: v0.0.3
+      subdir: packages/deno-http-server
+    deno-runtime:
+      git: https://github.com/colinlogue/purescript-deno-core
+      ref: v0.0.3
+      subdir: packages/deno-runtime
+    deno-shared:
+      git: https://github.com/colinlogue/purescript-deno-core
+      ref: v0.0.3
+      subdir: packages/deno-shared
+    deno-subprocess:
+      git: https://github.com/colinlogue/purescript-deno-core
+      ref: v0.0.3
+      subdir: packages/deno-subprocess

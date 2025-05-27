@@ -11,6 +11,7 @@
             "codec-argonaut",
             "console",
             "debug",
+            "deno-http-server",
             "effect",
             "nullable",
             "prelude",
@@ -39,6 +40,7 @@
             "control",
             "datetime",
             "debug",
+            "deno-http-server",
             "distributive",
             "effect",
             "either",
@@ -643,7 +645,38 @@
         "zipperarray": "2.0.0"
       }
     },
-    "extra_packages": {}
+    "extra_packages": {
+      "deno-errors": {
+        "git": "https://github.com/colinlogue/purescript-deno-core",
+        "ref": "v0.0.3",
+        "subdir": "packages/deno-errors"
+      },
+      "deno-file-system": {
+        "git": "https://github.com/colinlogue/purescript-deno-core",
+        "ref": "v0.0.3",
+        "subdir": "packages/deno-file-system"
+      },
+      "deno-http-server": {
+        "git": "https://github.com/colinlogue/purescript-deno-core",
+        "ref": "v0.0.3",
+        "subdir": "packages/deno-http-server"
+      },
+      "deno-runtime": {
+        "git": "https://github.com/colinlogue/purescript-deno-core",
+        "ref": "v0.0.3",
+        "subdir": "packages/deno-runtime"
+      },
+      "deno-shared": {
+        "git": "https://github.com/colinlogue/purescript-deno-core",
+        "ref": "v0.0.3",
+        "subdir": "packages/deno-shared"
+      },
+      "deno-subprocess": {
+        "git": "https://github.com/colinlogue/purescript-deno-core",
+        "ref": "v0.0.3",
+        "subdir": "packages/deno-subprocess"
+      }
+    }
   },
   "packages": {
     "aff": {
@@ -902,6 +935,22 @@
       "dependencies": [
         "functions",
         "prelude"
+      ]
+    },
+    "deno-http-server": {
+      "type": "git",
+      "url": "https://github.com/colinlogue/purescript-deno-core",
+      "rev": "c18b01a7508c10f13414daa0a34ed14186e408a7",
+      "subdir": "packages/deno-http-server",
+      "dependencies": [
+        "aff",
+        "aff-promise",
+        "effect",
+        "functions",
+        "maybe",
+        "nullable",
+        "prelude",
+        "web-fetch"
       ]
     },
     "distributive": {
