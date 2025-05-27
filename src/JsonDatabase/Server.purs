@@ -5,29 +5,27 @@ import Prelude
 import Control.Monad.Error.Class (liftMaybe, try)
 import Control.Promise (Promise)
 import Control.Promise as Promise
-import Data.Argonaut (Json, JsonDecodeError)
+import Data.Argonaut (Json, JsonDecodeError, encodeJson)
 import Data.Array as Array
 import Data.Either (Either(..))
+import Data.Int as Int
 import Data.Maybe (Maybe(..))
-import Data.Nullable (toNullable)
+import Data.Nullable (null)
 import Data.String (Pattern(..))
 import Data.String as String
 import Data.Tuple.Nested ((/\))
-import Debug (spy)
-import Deno.HttpServer (AbortSignal, HttpServer)
+import Deno.HttpServer (ServeHandler)
 import Deno.HttpServer as HttpServer
 import Effect (Effect)
-import Effect.Aff (Aff, error, makeAff)
+import Effect.Aff (Aff, error, runAff_)
 import Effect.Class (liftEffect)
-import Effect.Console as Console
-import Effect.Exception (Error)
-import Effect.Uncurried (EffectFn1, mkEffectFn1)
+import Effect.Uncurried (EffectFn1, EffectFn2, runEffectFn1, runEffectFn2)
 import JsonDatabase (Location, RetrievalError(..))
 import JsonDatabase as JsonDatabase
+import Web.Fetch.Headers (Headers)
+import Web.Fetch.Headers as Headaers
 import Web.Fetch.Request (Request)
-import Web.Fetch.Request as Request
 import Web.Fetch.Response (Response)
-import Web.Fetch.Response as Response
 import Web.URL as URL
 
 
@@ -48,8 +46,10 @@ type JsonServerInterface a =
   , close :: Effect Unit
   }
 
+foreign import _requestJson :: EffectFn1 Request (Promise Json)
+
 requestJson :: Request -> Aff Json
-requestJson req = Promise.toAff (Request.json req)
+requestJson req = (liftEffect $ runEffectFn1 _requestJson req) >>= Promise.toAff
 
 relativePathFromRoot :: Array String -> Array String -> Maybe (Array String)
 relativePathFromRoot root path =
@@ -62,20 +62,31 @@ relativePathFromRoot root path =
 locationFromPath :: Array String -> Maybe Location
 locationFromPath = Array.unsnoc >>> map \{ init: index, last: key } -> { index, key }
 
+foreign import _responseJson :: EffectFn2 Json Headers Response
+
+responseJson :: Json -> Headers -> Aff Response
+responseJson json headers = liftEffect $ runEffectFn2 _responseJson json headers
+
 jsonResponse :: Json -> Aff Response
-jsonResponse json = liftEffect $ Response.json json { headers = { "Access-Control-Allow-Origin": "*" } }
+jsonResponse json = responseJson json $ Headaers.fromRecord { "Access-Control-Allow-Origin": "*" }
 
 errorResponse :: String -> Int -> Aff Response
-errorResponse message status = liftEffect $ 
-  Response.json { error: message } { status, headers = { "Access-Control-Allow-Origin": "*" } }
+errorResponse message status = responseJson (encodeJson { error: message, status }) $ Headaers.fromRecord { "Access-Control-Allow-Origin": "*" }
+
+foreign import requestUrl :: Request -> String
+
+foreign import requestMethod :: Request -> String
+
+-- TODO: Better typing
+foreign import newResponse :: EffectFn2 String Headers Response
 
 handleRequest :: forall a. JsonServer a -> Request -> Aff Response
 handleRequest (JsonServer { get, set, init: { encode, decode, root } }) request = do
-  let url = URL.unsafeFromAbsolute $ Request.url request
+  let url = URL.unsafeFromAbsolute $ requestUrl request
   let path = Array.drop 1 $ String.split (Pattern "/") $ URL.pathname url
-  relativePath <- liftMaybe (error "Invalid path") $ relativePathFromRoot (spy "root" root) (spy "path" path)
+  relativePath <- liftMaybe (error "Invalid path") $ relativePathFromRoot root path
   location <- liftMaybe (error "Empty path") $ locationFromPath relativePath
-  case Request.method request of
+  case requestMethod request of
     "GET" -> do
       result <- get location
       case result of
@@ -109,28 +120,30 @@ startJsonDatabaseServer init@{ encode, decode, root, port } =
     updateLocation :: Location -> Location
     updateLocation = \location -> location { index = Array.concat [root, location.index] }
 
-    requestHandler :: Request -> { remoteAddr :: _ } -> Aff Response
-    requestHandler request _ = do
-      liftEffect $ Console.log $ "Received request: " <> Request.method request <> " " <> Request.url request
+    requestHandler :: ServeHandler _
+    requestHandler _ request = do
       -- Handle OPTIONS requests for CORS
-      if Request.method request == "OPTIONS" then
-        liftEffect $ Response.new' { 
-          headers: { 
-            "Access-Control-Allow-Origin": "*", 
-            "Access-Control-Allow-Methods": "GET, PUT, OPTIONS",
-            "Access-Control-Allow-Headers": "Content-Type" 
-          }
-        }
+      if requestMethod request == "OPTIONS" then
+        let
+          method = "OPTIONS"
+          headers = Headaers.fromRecord
+            { "Access-Control-Allow-Origin": "*"
+            , "Access-Control-Allow-Methods": "GET, PUT, OPTIONS"
+            , "Access-Control-Allow-Headers": "Content-Type"
+            }
+        in liftEffect $ runEffectFn2 newResponse method headers
       else do
         -- Handle regular requests
-        response <- handleRequest (JsonServer dummyInterface) request
-        -- Add CORS header to response
-        -- As of now, we can't modify headers directly, so CORS is handled in the jsonResponse and errorResponse functions
-        liftEffect $ Console.log $ "Sending response with status: " <> show (Response.status response)
-        pure response
+        handleRequest (JsonServer dummyInterface) request
   in do
-    let serverOptions = { port, hostname: "0.0.0.0", signal: toNullable Nothing }
+    let
+      serverOptions =
+        { port: Int.toNumber port
+        , hostname: "0.0.0.0"
+        , signal: null
+        , reusePort: false
+        }
     server <- HttpServer.serveTcp serverOptions requestHandler
-    
-    pure $ JsonServer dummyInterface 
-      { close = liftEffect $ HttpServer.shutdown server *> pure unit }
+
+    pure $ JsonServer dummyInterface
+      { close = runAff_ (const $ pure unit) $ HttpServer.shutdown server }
