@@ -2,12 +2,13 @@
   "name": "purescript-deno-json-db",
   "devDependencies": {
     "@types/deno": "^2.3.0",
+    "deno": "^2.3.3",
     "purescript": "^0.15.15",
     "spago": "^0.93.44",
     "typescript": "^5.8.3"
   },
   "scripts": {
-    "build": "tsc; spago build",
+    "build": "tsc && spago build",
     "main": "mkdir -p scratch/db && cd scratch/db && deno run --allow-all ../../main.ts"
   }
 }
