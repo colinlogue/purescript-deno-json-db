@@ -19,6 +19,7 @@ import Deno.HttpServer as HttpServer
 import Effect (Effect)
 import Effect.Aff (Aff, error, makeAff)
 import Effect.Class (liftEffect)
+import Effect.Console as Console
 import Effect.Exception (Error)
 import Effect.Uncurried (EffectFn1, mkEffectFn1)
 import JsonDatabase (Location, RetrievalError(..))
@@ -110,6 +111,7 @@ startJsonDatabaseServer init@{ encode, decode, root, port } =
 
     requestHandler :: Request -> { remoteAddr :: _ } -> Aff Response
     requestHandler request _ = do
+      liftEffect $ Console.log $ "Received request: " <> Request.method request <> " " <> Request.url request
       -- Handle OPTIONS requests for CORS
       if Request.method request == "OPTIONS" then
         liftEffect $ Response.new' { 
@@ -122,10 +124,13 @@ startJsonDatabaseServer init@{ encode, decode, root, port } =
       else do
         -- Handle regular requests
         response <- handleRequest (JsonServer dummyInterface) request
+        -- Add CORS header to response
+        -- As of now, we can't modify headers directly, so CORS is handled in the jsonResponse and errorResponse functions
+        liftEffect $ Console.log $ "Sending response with status: " <> show (Response.status response)
         pure response
   in do
     let serverOptions = { port, hostname: "0.0.0.0", signal: toNullable Nothing }
     server <- HttpServer.serveTcp serverOptions requestHandler
     
     pure $ JsonServer dummyInterface 
-      { close = liftEffect $ Promise.toAff (HttpServer.shutdown server) *> pure unit }
+      { close = liftEffect $ HttpServer.shutdown server *> pure unit }
