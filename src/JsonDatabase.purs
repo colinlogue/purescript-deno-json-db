@@ -15,13 +15,13 @@ import Data.Generic.Rep (class Generic)
 import Data.Maybe (Maybe(..))
 import Data.Show.Generic (genericShow)
 import Data.String as String
-import Deno (mkdir, open) as Deno
 import Deno.Errors (isNotFoundError)
-import Deno.FsFile (FsFile)
-import Deno.FsFile as FsFile
-import Deno.MkdirOptions as MkdirOptions
-import Deno.OpenOptions (OpenOptions)
-import Deno.OpenOptions as OpenOptions
+import Deno.FileSystem as Deno
+import Deno.FileSystem.FsFile (FsFile)
+import Deno.FileSystem.FsFile as FsFile
+import Deno.FileSystem.MkdirOptions as MkdirOptions
+import Deno.FileSystem.OpenOptions (OpenOptions)
+import Deno.FileSystem.OpenOptions as OpenOptions
 import Effect (Effect)
 import Effect.Aff (Aff, finally, makeAff, throwError, try)
 import Effect.Class (liftEffect)

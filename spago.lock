@@ -11,6 +11,8 @@
             "codec-argonaut",
             "console",
             "debug",
+            "deno-errors",
+            "deno-file-system",
             "deno-http-server",
             "effect",
             "nullable",
@@ -40,7 +42,10 @@
             "control",
             "datetime",
             "debug",
+            "deno-errors",
+            "deno-file-system",
             "deno-http-server",
+            "deno-shared",
             "distributive",
             "effect",
             "either",
@@ -648,32 +653,32 @@
     "extra_packages": {
       "deno-errors": {
         "git": "https://github.com/colinlogue/purescript-deno-core",
-        "ref": "v0.0.3",
+        "ref": "v0.0.6",
         "subdir": "packages/deno-errors"
       },
       "deno-file-system": {
         "git": "https://github.com/colinlogue/purescript-deno-core",
-        "ref": "v0.0.3",
+        "ref": "v0.0.6",
         "subdir": "packages/deno-file-system"
       },
       "deno-http-server": {
         "git": "https://github.com/colinlogue/purescript-deno-core",
-        "ref": "v0.0.3",
+        "ref": "v0.0.6",
         "subdir": "packages/deno-http-server"
       },
       "deno-runtime": {
         "git": "https://github.com/colinlogue/purescript-deno-core",
-        "ref": "v0.0.3",
+        "ref": "v0.0.6",
         "subdir": "packages/deno-runtime"
       },
       "deno-shared": {
         "git": "https://github.com/colinlogue/purescript-deno-core",
-        "ref": "v0.0.3",
+        "ref": "v0.0.6",
         "subdir": "packages/deno-shared"
       },
       "deno-subprocess": {
         "git": "https://github.com/colinlogue/purescript-deno-core",
-        "ref": "v0.0.3",
+        "ref": "v0.0.6",
         "subdir": "packages/deno-subprocess"
       }
     }
@@ -937,10 +942,37 @@
         "prelude"
       ]
     },
+    "deno-errors": {
+      "type": "git",
+      "url": "https://github.com/colinlogue/purescript-deno-core",
+      "rev": "43f052d6fb89f59d40fcca5bd0506a9cfd79cbde",
+      "subdir": "packages/deno-errors",
+      "dependencies": [
+        "exceptions"
+      ]
+    },
+    "deno-file-system": {
+      "type": "git",
+      "url": "https://github.com/colinlogue/purescript-deno-core",
+      "rev": "43f052d6fb89f59d40fcca5bd0506a9cfd79cbde",
+      "subdir": "packages/deno-file-system",
+      "dependencies": [
+        "aff",
+        "arraybuffer-types",
+        "deno-shared",
+        "effect",
+        "exceptions",
+        "functions",
+        "maybe",
+        "nullable",
+        "prelude",
+        "web-streams"
+      ]
+    },
     "deno-http-server": {
       "type": "git",
       "url": "https://github.com/colinlogue/purescript-deno-core",
-      "rev": "c18b01a7508c10f13414daa0a34ed14186e408a7",
+      "rev": "43f052d6fb89f59d40fcca5bd0506a9cfd79cbde",
       "subdir": "packages/deno-http-server",
       "dependencies": [
         "aff",
@@ -951,6 +983,23 @@
         "nullable",
         "prelude",
         "web-fetch"
+      ]
+    },
+    "deno-shared": {
+      "type": "git",
+      "url": "https://github.com/colinlogue/purescript-deno-core",
+      "rev": "43f052d6fb89f59d40fcca5bd0506a9cfd79cbde",
+      "subdir": "packages/deno-shared",
+      "dependencies": [
+        "aff",
+        "effect",
+        "either",
+        "exceptions",
+        "maybe",
+        "nullable",
+        "prelude",
+        "unsafe-coerce",
+        "web-url"
       ]
     },
     "distributive": {
