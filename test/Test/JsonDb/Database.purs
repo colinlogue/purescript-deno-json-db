@@ -45,7 +45,7 @@ spec = describe "JsonDb.Database" do
     -- Tests for direct database operations
     it "should handle set and get operations" do
       let
-        location = { index: ["test", "direct"], key: "directKey" }
+        location = { index: ["test", "data", "direct"], key: "directKey" }
         value = TestRecord { value: "direct test", count: 100 }
 
       _ <- set encodeTestRecord location value
@@ -57,7 +57,7 @@ spec = describe "JsonDb.Database" do
 
     it "should handle update operations" do
       let
-        location = { index: ["test", "update"], key: "updateKey" }
+        location = { index: ["test", "data", "update"], key: "updateKey" }
         initialValue = TestRecord { value: "update test", count: 50 }
         updateFunction = \(TestRecord r) -> TestRecord r { count = r.count * 2 }
 
@@ -75,7 +75,7 @@ spec = describe "JsonDb.Database" do
         dbInit =
           { encode: encodeTestRecord
           , decode: decodeTestRecord
-          , root: ["test", "memoryDb"]
+          , root: ["test", "data", "memoryDb"]
           }
         db = createDatabase dbInit
         interface = getDatabaseInterface db
@@ -94,7 +94,7 @@ spec = describe "JsonDb.Database" do
         dbInit =
           { encode: encodeTestRecord
           , decode: decodeTestRecord
-          , root: ["test", "memoryDb"]
+          , root: ["test", "data", "memoryDb"]
           }
         db = createDatabase dbInit
         interface = getDatabaseInterface db

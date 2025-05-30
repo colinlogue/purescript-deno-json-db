@@ -1,7 +1,7 @@
 {
   "workspace": {
     "packages": {
-      "template": {
+      "deno-json-db": {
         "path": "./",
         "core": {
           "dependencies": [
@@ -17,6 +17,7 @@
             "effect",
             "nullable",
             "prelude",
+            "random",
             "strings",
             "web-fetch",
             "web-url"
@@ -83,6 +84,7 @@
             "prelude",
             "profunctor",
             "profunctor-lenses",
+            "random",
             "record",
             "refs",
             "safe-coerce",
@@ -1729,6 +1731,15 @@
         "record",
         "transformers",
         "tuples"
+      ]
+    },
+    "random": {
+      "type": "registry",
+      "version": "6.0.0",
+      "integrity": "sha256-CJ611a35MPCE7XQMp0rdC6MCn76znlhisiCRgboAG+Q=",
+      "dependencies": [
+        "effect",
+        "integers"
       ]
     },
     "record": {

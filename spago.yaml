@@ -1,5 +1,5 @@
 package:
-  name: template
+  name: deno-json-db
   dependencies:
     - aff
     - aff-promise
@@ -13,6 +13,7 @@ package:
     - effect
     - nullable
     - prelude
+    - random
     - strings
     - web-fetch
     - web-url
