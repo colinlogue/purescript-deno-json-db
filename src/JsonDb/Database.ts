@@ -1,4 +1,4 @@
-import type { EffectFn1, EffectFn3, EffectFn4 } from "./purescript.d.ts";
+import type { EffectFn1, EffectFn3, EffectFn4 } from "../purescript.d.ts";
 
 
 export const _writeTextToFile: EffectFn4<string, Deno.FsFile, () => void, EffectFn1<Error, void>, void> = (text, file, onSuccess, onError) => {
@@ -28,23 +28,18 @@ export const _readTextFromFile: EffectFn3<Deno.FsFile, EffectFn1<string, void>, 
   let contents = "";
 
   const doRead = () => {
-
     const buffer = new Uint8Array(1024);
-
     file.read(buffer)
       .then(numBytesRead => {
-        if (numBytesRead === null) {
+        if (numBytesRead === null || numBytesRead === 0) {
           onSuccess(contents);
-          return;
+        } else {
+          contents += decoder.decode(buffer.subarray(0, numBytesRead));
+          doRead();
         }
-        const str = decoder.decode(buffer.subarray(0, numBytesRead), { stream: false });
-        contents += str;
-        doRead();
       })
-      .catch(err => {
-        onError(err);
-      });
-  };
+      .catch(onError);
+  }
 
   doRead();
-};
+}

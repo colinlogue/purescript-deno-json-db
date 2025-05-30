@@ -6,7 +6,7 @@ import Data.Argonaut (Json, JsonDecodeError(..), decodeJson, encodeJson, fromObj
 import Data.Either (Either(..), isRight)
 import Data.Maybe (Maybe(..))
 import Data.Tuple (Tuple(..))
-import JsonDb.Database (createDatabase, getDatabaseInterface)
+import JsonDb.Database (Location, RetrievalError, JsonDatabase, createDatabase, getDatabaseInterface, get, set, update)
 import Test.Spec (Spec, describe, it)
 import Test.Spec.Assertions (shouldEqual, shouldSatisfy)
 import Foreign.Object as Object
@@ -56,6 +56,34 @@ spec = describe "JsonDb.Database" do
       -- We'll verify the functions work in the other tests
       true `shouldEqual` true
 
+  describe "Low-level operations" do
+    -- Tests for direct database operations
+    it "should handle set and get operations" do
+      let
+        location = { index: ["test", "direct"], key: "directKey" }
+        value = TestRecord { value: "direct test", count: 100 }
+
+      _ <- set encodeTestRecord location value
+      result <- get decodeTestRecord location
+
+      result `shouldSatisfy` case _ of
+        Right v -> v == value
+        _ -> false
+
+    it "should handle update operations" do
+      let
+        location = { index: ["test", "update"], key: "updateKey" }
+        initialValue = TestRecord { value: "update test", count: 50 }
+        updateFunction = \(TestRecord r) -> TestRecord r { count = r.count * 2 }
+
+      _ <- set encodeTestRecord location initialValue
+      _ <- update encodeTestRecord decodeTestRecord location updateFunction
+      result <- get decodeTestRecord location
+
+      result `shouldSatisfy` case _ of
+        Right (TestRecord r) -> r.count == 100 && r.value == "update test"
+        _ -> false
+
   describe "Database operations" do
     it "should be able to set and get values" do
       let
@@ -96,5 +124,3 @@ spec = describe "JsonDb.Database" do
       result `shouldSatisfy` case _ of
         Right value -> value == TestRecord { value: "initial value", count: 11 }
         _ -> false
-
--- No additional helper functions needed as we're using Foreign.Object directly

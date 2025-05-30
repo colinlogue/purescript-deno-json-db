@@ -13,3 +13,4 @@ generated-docs/
 src/**/*.js
 .vscode
 scratch
+.spec-results
