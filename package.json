@@ -9,6 +9,7 @@
   },
   "scripts": {
     "build": "tsc && spago build",
-    "main": "mkdir -p scratch/db && cd scratch/db && deno run --allow-all ../../main.ts"
+    "main": "mkdir -p scratch/db && cd scratch/db && deno run --allow-all ../../main.ts",
+    "test": "npx spago build && deno run --allow-all test-deno.js"
   }
 }
