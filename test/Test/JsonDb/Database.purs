@@ -41,21 +41,6 @@ decodeTestRecord json = do
 -- Test specs
 spec :: Spec Unit
 spec = describe "JsonDb.Database" do
-  describe "createDatabase" do
-    it "should create a database with the correct interface" do
-      let
-        dbInit =
-          { encode: encodeTestRecord
-          , decode: decodeTestRecord
-          , root: ["test", "db"]
-          }
-        db = createDatabase dbInit
-        interface = getDatabaseInterface db
-
-      -- Simply test that the interface was created
-      -- We'll verify the functions work in the other tests
-      true `shouldEqual` true
-
   describe "Low-level operations" do
     -- Tests for direct database operations
     it "should handle set and get operations" do
