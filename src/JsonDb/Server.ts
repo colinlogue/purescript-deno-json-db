@@ -1,5 +1,5 @@
-export const _responseJson = (data: unknown, headers: Headers): Response => {
-  return Response.json(data, { headers });
+export const _responseJson = (status: number, data: unknown, headers: Headers): Response => {
+  return Response.json(data, { headers, status });
 };
 
 export const requestUrl = (request: Request): string => {

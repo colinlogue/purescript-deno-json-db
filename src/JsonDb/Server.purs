@@ -19,7 +19,7 @@ import Deno.HttpServer as HttpServer
 import Effect (Effect)
 import Effect.Aff (Aff, error, runAff_)
 import Effect.Class (liftEffect)
-import Effect.Uncurried (EffectFn1, EffectFn2, runEffectFn1, runEffectFn2)
+import Effect.Uncurried (EffectFn1, EffectFn2, EffectFn3, runEffectFn1, runEffectFn2, runEffectFn3)
 import JsonDb.Database (Location, RetrievalError(..), JsonDatabase, JsonDatabaseInit, createDatabase, getDatabaseInterface)
 import Web.Fetch.Headers (Headers)
 import Web.Fetch.Headers as Headers
@@ -53,16 +53,16 @@ relativePathFromRoot root path =
 locationFromPath :: Array String -> Maybe Location
 locationFromPath = Array.unsnoc >>> map \{ init: index, last: key } -> { index, key }
 
-foreign import _responseJson :: EffectFn2 Json Headers Response
+foreign import _responseJson :: EffectFn3 Int Json Headers Response
 
-responseJson :: Json -> Headers -> Aff Response
-responseJson json headers = liftEffect $ runEffectFn2 _responseJson json headers
+responseJson :: Int -> Json -> Headers -> Aff Response
+responseJson status json headers = liftEffect $ runEffectFn3 _responseJson status json headers
 
 jsonResponse :: Json -> Aff Response
-jsonResponse json = responseJson json $ Headers.fromRecord { "Access-Control-Allow-Origin": "*" }
+jsonResponse json = responseJson 200 json $ Headers.fromRecord { "Access-Control-Allow-Origin": "*" }
 
 errorResponse :: String -> Int -> Aff Response
-errorResponse message status = responseJson (encodeJson { error: message, status }) $ Headers.fromRecord { "Access-Control-Allow-Origin": "*" }
+errorResponse message status = responseJson status (encodeJson { error: message }) $ Headers.fromRecord { "Access-Control-Allow-Origin": "*" }
 
 foreign import requestUrl :: Request -> String
 
@@ -74,7 +74,7 @@ handleRequest :: forall a. JsonDatabase a -> JsonDatabaseInit a -> Request -> Af
 handleRequest database { encode, decode, root } request = do
   let url = URL.unsafeFromAbsolute $ requestUrl request
   let path = Array.drop 1 $ String.split (Pattern "/") $ URL.pathname url
-  relativePath <- liftMaybe (error "Invalid path") $ relativePathFromRoot root path
+  relativePath <- liftMaybe (error $ "Invalid path: " <> show path) $ relativePathFromRoot root path
   location <- liftMaybe (error "Empty path") $ locationFromPath relativePath
   let dbInterface = getDatabaseInterface database
   case requestMethod request of
