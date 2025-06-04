@@ -23,22 +23,18 @@ npm run main
 ## Running Tests
 
 ```bash
-# Run all tests
-npm run test
-
-# Or use the convenience script
-./run-tests.sh
+npm test
 ```
 
 ## Project Structure
 
 - `src/` - Source code
-  - `JsonDb/` - High-level database API
-  - `JsonDatabase/` - Low-level database implementation
+  - `JsonDb/` - Database API and implementation
+    - `Database.purs` - Core database functionality (file operations, JSON handling)
+    - `Server.purs` - HTTP server for database access
 - `test/` - Test code
-  - `Test/JsonDb/Database.purs` - Tests for the high-level database API
+  - `Test/JsonDb/Database.purs` - Tests for the database API and operations
   - `Test/JsonDb/Server.purs` - Tests for the server component
-  - `Test/JsonDatabase.purs` - Tests for the low-level database implementation
 
 ## License
 

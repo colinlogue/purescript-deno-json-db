@@ -14,8 +14,6 @@ import Data.String (Pattern(..))
 import Data.String as String
 import Data.Time.Duration (Milliseconds(..))
 import Data.Tuple (Tuple(..))
-import Debug (spy, traceM)
-import Debug as Debug
 import Effect (Effect)
 import Effect.Aff (Aff, delay)
 import Effect.Class (liftEffect)
@@ -192,10 +190,6 @@ spec = describe "JsonDb.Server" do
         getRequest <- liftEffect $ createRequest GET baseUrl "/test/data/server/records/non-existent" Nothing
 
         response <- liftEffect (fetch getRequest) >>= (convertPromise >>> Promise.toAff)
-        traceM response
-        jsonText <- liftEffect (Response.text response) >>= (convertPromise >>> Promise.toAff)
-        traceM jsonText
-
         Response.status response `shouldEqual` 404
 
       it "should handle CORS with OPTIONS requests" \{ port } -> do
