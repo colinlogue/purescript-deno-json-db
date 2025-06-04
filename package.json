@@ -1,5 +1,6 @@
 {
   "name": "purescript-deno-json-db",
+  "version": "0.0.1",
   "devDependencies": {
     "@types/deno": "^2.3.0",
     "deno": "^2.3.3",
